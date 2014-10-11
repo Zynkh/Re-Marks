@@ -1,0 +1,49 @@
+<div class="col-md-10 col-md-offset-1">
+  <div class="col-md-8 btn-group btn-group-justified">
+    <div class="btn-group">
+      <a type="button" class="btn btn-default form-font-bold" href="/docs/sort/documents">My Documents</a>
+    </div>
+    <div class="btn-group">
+      <a type="button" class="btn btn-default form-font-bold" href="/docs/sort/commented">Commented</a>
+    </div>
+    <div class="btn-group">
+      <a type="button" class="btn btn-default form-font-bold" href="/docs/sort/mostcommented">Most Commented On</a>
+    </div>
+    <div class="btn-group">
+      <a type="button" class="btn btn-default form-font-bold" href="/docs/sort/newest">Newest</a>
+    </div>
+  </div>
+</div>
+
+
+<% @sorted.each do |document| %> 
+<div class="row">
+  <a  href="/docs/<%= document.id %>">
+    <div class="col-md-10 col-md-offset-1 document-view-box default-box">
+      <div class="col-md-6">
+          <h1><%= document.title %></h1>
+        <div class="col-md-6 browse-boxes-details">
+          <p class="browse-author"><%= document.user.username %></p>
+          <p class="browse-comments"><%= document.comments.count %> comments.</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <p class="browse-paragraphs">
+          <%= document.description %>
+        </p>
+      </div>
+    </div>
+  </a>
+</div>
+<% end %>
+
+
+<script>
+var lang='de';
+
+$('#en').click(function (){
+    lang='en';
+    alert(lang);
+});
+
+</script>

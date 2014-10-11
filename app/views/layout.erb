@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    normalize.css removes cross-browser differences in defaults, e.g.,
+    differences in how form elements appear between Firefox and IE
+    See: http://necolas.github.com/normalize.css/
+  -->
+  <link rel="stylesheet" href="/stylesheets/normalize.css">
+  
+  <!--
+    application.css is where you put your styles
+  -->
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="/javascript/application.js"></script>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+  <!--
+    Bootstrap.
+  -->
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <!--
+    JQuery Notebook plugin. (WYSIWYG editor) Also FA fonts. Buggy with bootstrap.
+    https://github.com/raphaelcruzeiro/jquery-notebook
+  -->
+
+  <link rel="stylesheet" href="/stylesheets/application.css">
+  
+  <link rel="stylesheet" type="text/css" href="/bower_components/jquery-notebook/src/js/jquery.notebook.css">
+  <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+  <!-- custom font! all h1s. font-family: kotta-one, serif; -->
+  <script src="//use.edgefonts.net/kotta-one.js"></script>
+  <title></title>
+
+  <style type="text/css">
+    body{
+      padding-top: 70px;
+    }
+  </style>
+
+</head>
+<body>
+
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+  <div class = "container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    
+      <a href="/"><span id="re">Re:</span><span id="remarks">Marks</span></a>
+
+    </div>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="nav navbar-nav">
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <% if login? %>
+          <li><a href="/docs/create" class="text-muted nav-font">Create a Doc</a></li>
+          <li><a href="/docs" class="text-muted nav-font">Browse Docs</a></li>
+          <li><a href="/users/logout" class="text-muted nav-font">Logout</a></li>
+        <% else %>
+          <li><a href="/docs/create" class="text-muted nav-font">Create a Doc</a></li>
+          <li><a href="/docs" class="text-muted nav-font">Browse Docs</a></li>
+          <li><a href="/users/login" class="text-muted nav-font">Sign In / Sign Up</a></li>
+        <% end %>
+        </ul>
+    </div>
+  </div>
+</nav>
+
+  <div class="remark-background">
+    <%= yield %>
+      <div class="container-fluid" id="footer-fix">
+        <footer>
+          <!-- <small>&copy; Copyright 2014 ReMark</small> -->
+        </footer>
+      </div>
+  </div>
+
+</body>
+</html>

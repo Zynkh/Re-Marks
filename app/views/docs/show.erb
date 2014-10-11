@@ -1,0 +1,171 @@
+<div id="document-page-box" class="container default-box">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-xs-9 document_title"> <h1><%=@document.title%></h1><p id="document_page_author"><%=User.find(@document.user_id).username%></p></div>
+      <div class="column-md-3 col-md-offset-9">
+        <div class="side-comment">
+        <% @document.selectioncomments.each do |comment| %>
+          <div class="selection-comment" id="ID<%=comment.id%>">
+            <div class="comment-font">
+              <%= comment.content %>
+              
+            </div>
+            <div class="col-xs-12 comment_user comment-font-name">
+
+              - <%= User.find(comment.user_id).username%>
+            </div>
+          </div>
+        <% end %> 
+          <div class="comment-select-button"><span class="fa fa-edit fa-lg"></span> Select Something!</div>
+          <div class="spacer">
+            <form class="comment-form-select" role="form">
+              <textarea  class="form-control select-comment-input" id="comment-submit-textbox" rows="1" name="comment" placeholder="Type Something"></textarea>
+              <div class="spacer"></div>
+              <input type="hidden">
+              <div>
+                <button type="button" class="btn btn-default select-submit-button form-font-bold">Submit</button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      
+    </div>
+
+      <% @document.paragraphs.each do |paragraph| %>
+        
+        <div class="row-fluid">
+          <div class="col-xs-9 paragraph_body" data-target="#comment_for_paragraph_<%=paragraph.id%>"> <%= paragraph.body %></div>
+          <div id="comment_for_paragraph_<%=paragraph.id%>" class="col-xs-3 comment_bar">
+            <% paragraph.comments.each do |comment| %>
+            <div>
+              <div class="comment-font">
+                <%= comment.content %>
+                
+              </div>
+              <div class="col-xs-12 comment_user comment-font-name">
+
+                - <%= User.find(comment.user_id).username%>
+              </div>
+            </div>
+              
+            <% end %>
+            <%if session[:id]%>
+              <div>
+                <span onclick="$('#comment_form_<%= paragraph.id%>').toggle();" id="comment-view-button" class="fa fa-comment fa-lg"></span>
+              </div>
+              <div class="spacer"></div>
+              <form class="comment_form" id="comment_form_<%= paragraph.id%>" role="form" method="post" action="/comment" >
+                <textarea class="form-control"  id="comment-submit-textbox" rows="1" name="comment" placeholder="Comment..."></textarea>
+                <input type="hidden" name="paragraph_id" value=<%=paragraph.id%>>
+                <div class="spacer"></div>
+                <div><input type="submit" class="btn btn-default form-font-bold" value="Submit"></div>
+              </form>
+            <%end%>
+          </div>
+        </div>   
+      <% end %>
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+var selectMode = false;
+
+  $(".comment-select-button").on("click", function(){
+    if(selectMode === true){
+      $('.paragraph_body').css('cursor','pointer');
+      $('.comment-form-select').hide()
+      selectMode = false;
+    } else {
+      $('.paragraph_body').css("cursor", "text");
+      $('.comment-form-select').show()
+      selectMode = true;
+    };
+  });
+
+  $('.paragraph_body').on("mouseup", function() {
+    if(selectMode === true){
+      var selection = window.getSelection().getRangeAt(0);
+      var toGetParagraphID = selection.commonAncestorContainer.parentNode;
+      var paragraphID;
+
+      if ($(toGetParagraphID).is('p')){
+        paragraphID = $(toGetParagraphID.parentNode).attr('data-target').split('_')[3];
+        paragraphFetcher = 2
+      } else if ($(toGetParagraphID).is('div')){
+        paragraphID = $(toGetParagraphID).attr('data-target').split('_')[3];
+        paragraphFetcher = 1
+      } else {
+        paragraphID = $(toGetParagraphID.parentNode.parentNode).attr('data-target').split('_')[3];
+        paragraphFetcher = 3
+      }
+      
+      //display a little + to indicate adding comments.
+      $.get('/scomment').then(function(id){
+        var selectedText = selection.extractContents();
+        var span= document.createElement("span");
+        span.className="comment-select";
+
+        span.setAttribute("data-selected", "ID"+id);
+        span.appendChild(selectedText);
+        selection.insertNode(span);
+        $(span).data("selected","ID"+id);
+
+        var paragraphText;
+        if (paragraphFetcher === 1){
+          paragraphText = $(toGetParagraphID)
+        } else if (paragraphFetcher === 2){
+          paragraphText = $(toGetParagraphID.parentNode)
+        } else if (paragraphFetcher === 3){
+          paragraphText = $(toGetParagraphID.parentNode.parentNode)
+        };
+        paragraphText = $(paragraphText)[0].innerHTML;
+        $('.select-submit-button').on("click", function(){
+          var commentText = $('.select-comment-input').val();
+          $.post('/scomment', {pid: paragraphID, pt: paragraphText, ct: commentText}).then(function(id){
+            if (id === "userloginpls"){
+              location.href = '/users/login';
+            } else {
+              location.href = '/docs/' + id;
+            };
+          });
+        });
+      });
+    };
+  });
+
+  $(".comment-select").on("click", function(event) {
+    event.stopPropagation();
+    if ( selectMode === false){
+      console.log("ClickeD!");
+      var selectCommentID = $(this).data("selected");
+      console.log(selectCommentID);
+      $('#' + selectCommentID).toggle()
+      $('.comment_bar').hide();
+      $('.side-comment').show();
+    }
+  });
+
+  $( ".paragraph_body" ).on("click", function() {
+    if ( selectMode === false){
+      var target = $( this ).attr("data-target");
+      var already_visible = $(target).is(":visible");
+      
+      // Hide all comments
+      $('.comment_bar').hide();
+      $('.side-comment').show();
+
+      // only show if wasn't originally visible
+      if (!already_visible) {
+        $(target).show();
+        $('.side-comment').hide();
+      }; // otherwise leave it hidden
+    };
+  });
+});
+</script>
+

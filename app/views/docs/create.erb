@@ -1,0 +1,66 @@
+<!--These Scripts are here for the editor to work. They need to be in the body -->
+<script type="text/javascript" src="/bower_components/jquery-notebook/src/js/libs/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="/bower_components/jquery-notebook/src/js/jquery.notebook.js"></script>
+
+<div class = "default-box" id="form-box">
+  <div class="row">
+      <div class="col-md-5 col-md-offset-1">
+        <form>
+          <div class="form-group">
+          <p class="document-title-error">Title Cannot be empty!</p>
+            <label class="form-font-bold" for="title">Title</label>
+            <input type="type" class="form-control title-input" placeholder="Put your document title here">
+          </div>
+          <div class="form-group">
+            <label class="form-font-bold" for="title">Description</label>
+            <textarea class="form-control description-input" rows="3" placeholder="Write a short description of your document here (Max 250 characters)"></textarea>
+          </div>
+        </form>
+      </div>
+    <div class="col-md-5">
+      <p class="instruction">Welcome to our lovely editor. Just input your title and document description into the fields provided, then let your literary prowess soar in the field below. It'll scale with you as you type, so go for it!</p>
+      <p class="instruction">If you want to style your text (change size, italicize, add links ect.) just select the text and a bubble will appear with your options. Nice!</p>
+    </div>
+
+  </div>
+  <div id="editor_box"><!--This Box CANNOT be styled with bootstrap It breaks the editor's styling.-->
+    <div class="editor"></div>
+  </div><!-- Bootstrap allowed past this point -->
+
+  <button type="button" id="create-page-submit-button" class="btn btn-default submit-btn form-font-bold">Submit</button>
+</div>
+
+<script>
+$(document).ready(function() {
+  $('.editor').notebook();
+  $('.document-title-error').hide();
+  console.log("doc loaded")
+  
+  function convertToArr(set) {
+    var results = [];
+    set.each(function(index) {
+      if ($(set[index]).text().length > 1) {
+        results.push(set[index].outerHTML);
+      }
+    });
+    return results;
+  };
+
+  $(".submit-btn").on( "click", function() {
+    console.log("clicked!")
+    var input = $('.editor').find('p,h1,h2');
+    input.removeAttr('contenteditable');
+    var paragraphs = convertToArr(input);
+    documentTitle = $('.title-input').val();
+    if (documentTitle === ""){
+      $('.document-create-error').show();
+    } else {
+      documentInfo = $('.description-input').val();
+      $.post('/docs', {p: paragraphs, d: documentInfo, t: documentTitle}).then(function(id)
+      {
+        location.href = '/docs/' + id;
+      });
+    }
+  });
+});
+</script>

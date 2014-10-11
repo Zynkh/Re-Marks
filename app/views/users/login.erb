@@ -1,0 +1,46 @@
+<div class="container default-box id" id="login-box">
+  <p id="no-account-warning"><%= @message %></p>
+  <div class="col-md-6">
+    <h2 class="login-font">Login</h2>
+    <hr/>
+    <% if @login_error %>
+      <div class="form-font-error">
+        <strong>Your username/password is incorrect.</strong>
+      </div>
+    <% end %>
+    <form role="form" method="post" action="/login">
+      <label class="form-font">Username:</label>
+      <input type="text" class="form-control" name="username" value="<%= @user.username %>">
+      <label class="form-font">Password:</label>
+      <input type="password" class="form-control" name="password" value="<%= @user.password %>">
+      <br>
+      <div><input type="submit" class="btn btn-default form-font-bold" value="Submit"></div>
+    </form>
+  </div>
+  <div class="col-md-6">
+    <h2 class="login-font">Sign Up</h2>
+    <hr/>
+    <% if @user.errors.any? %>
+      <div class="form-font-error">
+        <strong>Please fix the following errors:</strong>
+        <ul>
+          <% @user.errors.full_messages.each do |user| %>
+            <li><%= user %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <form role="form" method="post" action="/signup">
+      <label class="form-font">Username:</label>
+      <input type="text" class="form-control" name="username" value="<%= @user.username %>">
+      <label class="form-font">Email(optional):</label>
+      <input type="text" class="form-control" name="email" value="<%= @user.email %>">
+      <label class="form-font">Password:</label>
+      <input type="password" class="form-control" name="password" value="<%= @user.password %>">
+      <label class="form-font">Validate Password:</label>
+      <input type="password" class="form-control" name="validate_password">
+      <br>
+      <div><input type="submit" class="btn btn-default form-font-bold" value="Submit"></div>
+    </form>
+  </div>
+</div>
